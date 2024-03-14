@@ -1,0 +1,25 @@
+---
+- name: Configure Aironet
+  hosts: aironet
+  gather_facts: no
+  become: yes
+
+  tasks:
+    - name: Configure Aironet Wireless
+      ios_command:
+        commands:
+          - configure terminal
+          - wlan 31
+          - ssid __-wifiautoSSID
+          - authentication open
+          - no mbssid guest-mode
+          - exit
+          - interface dot11Radio 0
+          - ssid __-wifiautoSSID
+          - encryption mode ciphers tkip
+          - encryption vlan 31 key 1 size 128 C1sc0123
+          - channel 9
+          - end
+      vars:
+        ansible_network_os: ios
+      register: result_configure_aironet
