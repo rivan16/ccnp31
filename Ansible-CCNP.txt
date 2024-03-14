@@ -1,0 +1,122 @@
+CSR 1000v
+
+NAT - ADD IP ADDRESS
+
+# GENERATE RSA FOR SSH CONNECTION
+config t
+ip domain-name rivanit.com
+username admin2 privilege 15 secret password
+crypto key generate rsa
+                 !512->2048
+ip ssh version 2
+
+
+*****************************************************
+@@@@@@@@@@ CENTOS @@@@@@@@@@
+
+
+# ADD IP ADD TO HOSTS
+
+nano hosts
+
+[router1]
+0.0.0.0
+
+[router1:vars]
+ansible_user=admin
+ansible_password=password
+ansible_connection=network_cli
+ansible_port=22
+ansible_network_os=ios
+ansible_ssh_common_args="-o KexAlgorithms=+diffie-hellman-group14-sha1 -o HostKeyAlgorithms=+ssh-rsa"
+
+*****************************************************
+
+#SAMPLE YML FILE - 1 HOST
+
+
+---
+- name: Configure ROUTER 1
+  hosts: router1  # Replace with the appropriate host or group
+  gather_facts: no  # Disable fact gathering for network devices
+  become: yes  # Use privilege escalation to execute commands as a privileged user (if needed)
+
+  tasks:
+    - name: ROUTER 1
+      ios_command:
+        commands:
+          - configure terminal
+          - end
+      vars:
+        ansible_network_os: ios  # Specify the network OS (Cisco IOS)
+      register: result_create_vlans
+	  
+	  
+*****************************************************
+
+#SAMPLE YML FILE - 2 HOST  - SAME COMMAND
+	  
+---
+- name: Configure ROUTER 1 and ROUTER 2
+  hosts: 
+    - router1  # Replace with the appropriate host or group
+    - router2  # Add another host or group here
+  gather_facts: no  # Disable fact gathering for network devices
+  become: yes  # Use privilege escalation to execute commands as a privileged user (if needed)
+
+  tasks:
+    - name: ROUTER 1 and ROUTER 2
+      ios_command:
+        commands:
+          - configure terminal
+          - end
+      vars:
+        ansible_network_os: ios  # Specify the network OS (Cisco IOS)
+      register: result_create_vlans
+
+
+*****************************************************
+
+#SAMPLE YML FILE - 2 HOST  - DIFFERENT COMMAND
+
+
+#ROUTER 1
+
+---
+- name: Configure ROUTER 1
+  hosts: router1
+  gather_facts: no
+  become: yes
+
+  tasks:
+    - name: ROUTER 1 Configuration
+      ios_command:
+        commands:
+          - configure terminal
+          - end
+      vars:
+        ansible_network_os: ios
+      register: result_create_vlans
+
+#ROUTER 2
+
+- name: Configure ROUTER 2
+  hosts: router2
+  gather_facts: no
+  become: yes
+
+  tasks:
+    - name: ROUTER 2 Configuration
+      ios_command:
+        commands:
+          - configure terminal
+          - end
+      vars:
+        ansible_network_os: ios
+      register: result_create_vlans
+
+
+*****************************************************
+#REFRESH SSH Configuration
+
+ssh-keygen -f "/root/.ssh/known_hosts" -R "0.0.0.0"
