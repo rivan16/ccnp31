@@ -125,16 +125,36 @@ ansible_connection=network_cli
 ansible_port=22
 ansible_network_os=ios
 
+
+[ap]
+10.31.10.3
+
+[ap:vars]
+ansible_user=admin
+ansible_password=pass
+ansible_connection=network_cli
+ansible_port=22
+ansible_network_os=ios
+
+
 ********************************************************************
+@ CMD
+route add 10.0.0.0 mask 255.0.0.0 10.31.1.4
+
+
 @@ CENTOS
 ping 10.31.1.4
 ping 10.31.100.8
+ping 10.21.10.3
 
 ! COREBABA
 ssh -oKexAlgorithms=+diffie-hellman-group1-sha1 -c aes256-cbc admin@10.31.1.4
 
 ! CUCM
 ssh admin@10.31.100.8
+
+!ACCESS POINT
+ssh admin@10.31.10.3
 
 
 
