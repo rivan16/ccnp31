@@ -145,10 +145,10 @@ route add 10.0.0.0 mask 255.0.0.0 10.31.1.4
 @@ CENTOS
 ping 10.31.1.4
 ping 10.31.100.8
-ping 10.21.10.3
+ping 10.31.10.3
 
 ! COREBABA
-ssh -oKexAlgorithms=+diffie-hellman-group1-sha1 -c aes256-cbc admin@10.31.1.4
+!ssh -oKexAlgorithms=+diffie-hellman-group1-sha1 -c aes256-cbc admin@10.31.1.4
 
 ! CUCM
 ssh admin@10.31.100.8
